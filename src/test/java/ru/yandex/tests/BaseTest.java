@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import ru.yandex.configs.ConfigReader;
+import ru.yandex.scooter.Cookies;
 
 public class BaseTest {
 
@@ -32,7 +33,11 @@ public class BaseTest {
     @Before
     public void setUp() {
         driver = createWebDriver(browser);
+        Cookies cookies = new Cookies(driver);
         openResource();
+        //TODO грязновать, но полночь близится, а плашка принять куки все мешает
+        cookies.addCookies();
+        driver.navigate().refresh();
     }
 
     @After
@@ -62,6 +67,7 @@ public class BaseTest {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+        options.addArguments("--headless");
         return new ChromeDriver(options);
     }
 
@@ -69,6 +75,7 @@ public class BaseTest {
         WebDriverManager.firefoxdriver().setup();
 
         FirefoxOptions options = new FirefoxOptions();
+        options.addArguments("--headless");
         return new FirefoxDriver(options);
     }
 

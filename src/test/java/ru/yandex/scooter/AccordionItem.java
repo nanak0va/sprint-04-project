@@ -37,4 +37,8 @@ public class AccordionItem {
         WebElement panel = accordionItem.findElement(ACCORDION_ITEM_PANEL_SELECTOR);
         return panel.isDisplayed() ? panel.getText() : "";
     }
+
+    public WebElement getElement() {
+        return this.accordionItem;
+    }
 }

@@ -15,14 +15,13 @@ public class HomePageFourPart {
     private static final String FOUR_PART_HEADER_TEXT = "Вопросы о важном";
 
     private static final By FOUR_PART_SELECTOR = By.xpath(".//div[@class='Home_FourPart__1uthg']");
-    private static final By FOUR_PART_HEADER_SELECTOR = By.xpath(".//div[@class='Home_SubHeader__zwi_E']");
+    private static final By FOUR_PART_HEADER = By.xpath(".//div[@class='Home_SubHeader__zwi_E']");
 
     private final WebDriver driver;
-    private final WebElement fourPart;
+    private WebElement fourPart;
 
     public HomePageFourPart(WebDriver driver) {
         this.driver = driver;
-        this.fourPart = getElement();
     }
 
     public WebElement getElement() {
@@ -39,7 +38,7 @@ public class HomePageFourPart {
     public void waitForShowPage() {
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.textToBePresentInElement(
-                        fourPart.findElement(FOUR_PART_HEADER_SELECTOR),
+                        this.getElement().findElement(FOUR_PART_HEADER),
                         FOUR_PART_HEADER_TEXT
                 ));
     }

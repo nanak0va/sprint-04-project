@@ -8,8 +8,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-import static ru.yandex.scooter.Utils.scrollIntoElement;
-
 public class AccordionItem {
 
     private static final By ACCORDION_ITEM_BUTTON_SELECTOR = By.xpath(".//div[@class='accordion__button']");

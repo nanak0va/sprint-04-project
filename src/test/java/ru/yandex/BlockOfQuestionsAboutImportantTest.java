@@ -1,22 +1,22 @@
-package ru.yandex.tests;
+package ru.yandex;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import ru.yandex.scooter.Accordion;
-import ru.yandex.scooter.AccordionItem;
+import ru.yandex.common.BaseTest;
 import ru.yandex.scooter.HomePage;
-import ru.yandex.scooter.HomePageFourPart;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class AccordionItemsTest extends BaseTest {
+public class BlockOfQuestionsAboutImportantTest extends BaseTest {
+
+    private static final String MESSAGE_NOT_FOUND_ACCORD_ITEM = "Отобразился ответ отличный от ожидаемого или по заголовку \"%s\" не нашли элемент, смотри сравнение";
+    private static final String MESSAGE_DONT_SHOW_FOUR_PART = "Не отобразилась раздел главной страницы «Вопросы о важном»";
 
     private final String heading;
     private final String expectedAnswer;
 
-    public AccordionItemsTest(String heading, String expectedAnswer) {
+    public BlockOfQuestionsAboutImportantTest(String heading, String expectedAnswer) {
         super();
         this.heading = heading;
         this.expectedAnswer = expectedAnswer;
@@ -32,7 +32,7 @@ public class AccordionItemsTest extends BaseTest {
                 {"Можно ли продлить заказ или вернуть самокат раньше?", "Пока что нет! Но если что-то срочное — всегда можно позвонить в поддержку по красивому номеру 1010."},
                 {"Вы привозите зарядку вместе с самокатом?", "Самокат приезжает к вам с полной зарядкой. Этого хватает на восемь суток — даже если будете кататься без передышек и во сне. Зарядка не понадобится."},
                 {"Можно ли отменить заказ?", "Да, пока самокат не привезли. Штрафа не будет, объяснительной записки тоже не попросим. Все же свои."},
-                {"Я жизу за МКАДом, привезёте?", "Да, обязательно. Всем самокатов! И Москве, и Московской области."}
+                {"Я живу за МКАДом, привезёте?", "Да, обязательно. Всем самокатов! И Москве, и Московской области."},
         };
     }
 
@@ -40,18 +40,12 @@ public class AccordionItemsTest extends BaseTest {
     public void accordionItemClickShowExpectedDescription() {
 
         HomePage homePage = new HomePage(driver);
-        homePage.waitForLoadPage();
+        homePage.waitLoadHomePage();
 
-        HomePageFourPart homePageFourPart = homePage.getHomePageFourPart();
-        homePageFourPart.scrollInto();
-        homePageFourPart.waitForShowPage();
+        homePage.scrollIntoFourPart();
 
-        Accordion accordion = new Accordion(driver, homePageFourPart.getElement());
-        AccordionItem accordionItem = accordion.getAccordionItemByText(heading);
-        accordionItem.click();
-        accordionItem.waitForDisplayPanelText();
-
-        assertEquals("Текст панели не совпадает", expectedAnswer, accordionItem.getDisplayedPanelText());
+        Assert.assertTrue(MESSAGE_DONT_SHOW_FOUR_PART, homePage.waitShowFourPart());
+        Assert.assertEquals(String.format(MESSAGE_NOT_FOUND_ACCORD_ITEM, heading), expectedAnswer, homePage.findAndOpenAccordionItemByHeaderText(heading));
     }
 
 }

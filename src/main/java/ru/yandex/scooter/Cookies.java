@@ -2,7 +2,6 @@ package ru.yandex.scooter;
 
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import ru.yandex.configs.ConfigReader;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,14 +10,16 @@ import java.util.Date;
 public class Cookies {
 
     private final WebDriver driver;
+    private final String domainUrl;
 
-    public Cookies(WebDriver driver) {
+    public Cookies(WebDriver driver, String url) {
         this.driver = driver;
+        this.domainUrl = url;
     }
 
     public String getDomain() {
         try {
-            URI uri = new URI(ConfigReader.getUrl());
+            URI uri = new URI(domainUrl);
             return uri.getHost();
         } catch (URISyntaxException e) {
             return "";

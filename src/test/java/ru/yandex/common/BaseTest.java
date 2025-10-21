@@ -1,43 +1,28 @@
-package ru.yandex.tests;
+package ru.yandex.common;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import ru.yandex.configs.ConfigReader;
+import ru.yandex.configs.BrowserType;
 import ru.yandex.scooter.Cookies;
 
 public class BaseTest {
 
-    public final String uriResourceUnderTest;
+    public final String uriResourceUnderTest = "https://qa-scooter.praktikum-services.ru/";
 
-    private final BrowserType browser;
+    private final BrowserType browser = BrowserType.CHROME;
 
     public WebDriver driver;
 
-    public BaseTest() {
-        this.browser = ConfigReader.getBrowser();
-        this.uriResourceUnderTest = ConfigReader.getUrl();
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-        ConfigReader.loadProperties();
-    }
-
     @Before
     public void setUp() {
-        driver = createWebDriver(browser);
-        Cookies cookies = new Cookies(driver);
+        this.driver = createWebDriver(browser);
         openResource();
-        //TODO грязновать, но полночь близится, а плашка принять куки все мешает
-        cookies.addCookies();
-        driver.navigate().refresh();
+        disableCookiesPanel(uriResourceUnderTest);
     }
 
     @After
@@ -45,6 +30,14 @@ public class BaseTest {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    //убираю плашку с предложением об использовании куки
+    //она может перекрывать нижние элементы на странице, мешая тестам
+    public void disableCookiesPanel(String domainUri) {
+        Cookies cookies = new Cookies(driver, domainUri);
+        cookies.addCookies();
+        driver.navigate().refresh();
     }
 
     public void openResource() {
@@ -64,19 +57,13 @@ public class BaseTest {
 
     private ChromeDriver createChromeDriver() {
         WebDriverManager.chromedriver().setup();
-
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
-        options.addArguments("--headless");
         return new ChromeDriver(options);
     }
 
     private FirefoxDriver createFirefoxDriver() {
         WebDriverManager.firefoxdriver().setup();
-
-        FirefoxOptions options = new FirefoxOptions();
-        options.addArguments("--headless");
-        return new FirefoxDriver(options);
+        return new FirefoxDriver();
     }
-
 }
